@@ -1,4 +1,5 @@
 {
   "block.entitymodules.entity_module": "Entity Module",
-  "creative_tab.entity_module_tab": "Entity Modules"
+  "creative_tab.entity_module_tab": "Entity Modules",
+  "item.entitymodules.entity_module_controller": "Module Controller"
 }

@@ -22,14 +22,9 @@ class ModBlockLootTables(
     provider
 ) {
 
+    override fun getKnownBlocks(): Iterable<Block?> = EMRegistries.BLOCK_REGISTRY.entries.map{ x -> x.get()}.toList() as Iterable<Block?>
 
-    override fun getKnownBlocks(): Iterable<Block?> {
-        return EMRegistries.BLOCK_REGISTRY.entries.map{ x -> x.get()}.toList() as Iterable<Block?>
-    }
-
-    override fun generate() {
-        dropSelf(EMRegistries.ENTITY_MODULE_BLOCK)
-    }
+    override fun generate() = dropSelf(EMRegistries.ENTITY_MODULE_BLOCK)
 }
 
 object ModLootTableProvider {

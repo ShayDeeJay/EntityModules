@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger
 import org.shaydee.entitymodules.registry.EMRegistries
 import org.shaydee.entitymodules.registry.EMRegistries.CREATIVE_MODE_TAB
 import org.shaydee.entitymodules.registry.EMRegistries.ENTITY_MODULE_BLOCK
+import org.shaydee.entitymodules.registry.EMRegistries.ENTITY_MODULE_CONTROLLER
 import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
 import thedarkcolour.kotlinforforge.neoforge.forge.runForDist
 
@@ -42,7 +43,10 @@ class EntityModules {
             CreativeModeTab.builder()
                 .icon { ItemStack(ENTITY_MODULE_BLOCK.asItem()) }
                 .title(Component.translatable("creative_tab.entity_module_tab"))
-                .displayItems { parameters, outPut -> outPut.accept { ENTITY_MODULE_BLOCK.asItem() } }
+                .displayItems { parameters, outPut ->
+                    outPut.accept{ ENTITY_MODULE_BLOCK.asItem() }
+                    outPut.accept { ENTITY_MODULE_CONTROLLER }
+                }
                 .withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
                 .build()
         }
