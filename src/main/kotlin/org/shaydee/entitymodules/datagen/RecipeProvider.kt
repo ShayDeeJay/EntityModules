@@ -5,15 +5,10 @@ import net.minecraft.data.PackOutput
 import net.minecraft.data.recipes.RecipeCategory
 import net.minecraft.data.recipes.RecipeOutput
 import net.minecraft.data.recipes.RecipeProvider
-import net.minecraft.data.recipes.RecipeProvider.has
 import net.minecraft.data.recipes.ShapedRecipeBuilder
-import net.minecraft.world.flag.FeatureFlagSet
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
-import net.minecraft.world.level.ItemLike
-import net.neoforged.neoforge.common.Tags
 import org.shaydee.entitymodules.registry.EMRegistries
-import java.util.List
 import java.util.concurrent.CompletableFuture
 
 class RecipeProvider(
@@ -28,7 +23,7 @@ class RecipeProvider(
 
     fun entityModuleRecipe(output: RecipeOutput, result: Item) {
         val redStone = Items.REDSTONE
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result, 4)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result, 1)
             .define('M', Items.STONE)
             .define('Z', redStone)
             .define('X', Items.COMPARATOR)
@@ -42,7 +37,7 @@ class RecipeProvider(
 
     fun entityModuleControllerRecipe(output: RecipeOutput, result: Item) {
         val item = EMRegistries.ENTITY_MODULE_BLOCK.asItem()
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result, 4)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, result, 1)
             .define('W', Items.SAND)
             .define('M', Items.REPEATER)
             .define('X', item)

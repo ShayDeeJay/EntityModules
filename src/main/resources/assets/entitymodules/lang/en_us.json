@@ -1,5 +1,13 @@
 {
   "block.entitymodules.entity_module": "Entity Module",
   "creative_tab.entity_module_tab": "Entity Modules",
-  "item.entitymodules.entity_module_controller": "Module Controller"
+  "item.entitymodules.entity_module_controller": "Module Controller",
+
+  "entitymodules.modes.position": "Position",
+  "entitymodules.modes.size": "Size",
+  "entitymodules.modes.reset": "Reset",
+
+  "entitymodules.info.pos": "Pos",
+  "entitymodules.info.mode": "Mode: "
+
 }

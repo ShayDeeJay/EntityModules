@@ -75,6 +75,8 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
     implementation 'thedarkcolour:kotlinforforge-neoforge:5.3.0'
+    implementation("org.shaydee:ShaydeeAPI:${shaydeeapi_version}")
+
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

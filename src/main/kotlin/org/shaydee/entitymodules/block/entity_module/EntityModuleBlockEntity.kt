@@ -4,20 +4,26 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.ai.targeting.TargetingConditions
+import net.minecraft.server.level.ServerLevel
+import net.minecraft.world.entity.Entity
+import net.minecraft.world.entity.animal.Animal
+import net.minecraft.world.entity.monster.Enemy
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.DispenserBlock.TRIGGERED
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.AABB
-import org.shaydee.entitymodules.block.SyncedBlockEntity
+import net.neoforged.neoforge.capabilities.Capabilities
+import net.neoforged.neoforge.common.NeoForge
+import net.neoforged.neoforge.energy.ComponentEnergyStorage
 import org.shaydee.entitymodules.registry.EMRegistries
+import org.shaydee.shaydeeapi.Helpers
+import org.shaydee.shaydeeapi.block.AbstractBEInventory
 
 class EntityModuleBlockEntity(
     pos: BlockPos,
     blockState: BlockState,
-) : SyncedBlockEntity(EMRegistries.ENTITY_MODULE_BE, pos, blockState) {
+) : AbstractBEInventory(EMRegistries.ENTITY_MODULE_BE, pos, blockState, 1) {
 
     var north = 0
     var south = 0
@@ -29,16 +35,36 @@ class EntityModuleBlockEntity(
     var ySize = 1
     var zSize = 1
 
-    fun tick(level: Level, pos: BlockPos, state: BlockState) {
-        println(north)
-        println(south)
-        println(east)
-        println(west)
-        println(up)
-        println(down)
-
-        level.setBlockAndUpdate(blockPos, state.setValue(TRIGGERED, !getEntities().isEmpty()))
+    enum class EMType(val clazz: Class<*>){
+        MONSTER(Enemy::class.java),
+        PASSIVE(Animal::class.java),
+        PLAYER(Player::class.java)
     }
+
+    fun tick(level: Level, pos: BlockPos, state: BlockState) {
+        if(level is ServerLevel){
+            teleportEntity(level, EMType.MONSTER.clazz)
+//            outputEntityDetect(level, state, clazz)
+        }
+    }
+
+    private fun teleportEntity(level: ServerLevel, clazz: Class<*>){
+        val center = this.blockPos.center
+        getEntities(clazz).forEach {
+            it?.teleportTo(
+                level,
+                center.x,
+                center.y - it.bbHeight - 0.5,
+                center.z,
+                mutableSetOf(),
+                it.yRot,
+                it.xRot
+            )
+        }
+    }
+
+    private fun outputEntityDetect(level: Level, state: BlockState, clazz: Class<out Entity>) =
+        level.setBlockAndUpdate(blockPos, state.setValue(TRIGGERED, !getEntities(clazz).isEmpty()))
 
     fun resetBounding(){
         resetSize()
@@ -60,15 +86,10 @@ class EntityModuleBlockEntity(
         down = 0
     }
 
-    fun getEntities(): List<LivingEntity?> {
+    fun getEntities(clazz: Class<*>): List<Entity?> {
         val getLevel = this.level ?: return listOf()
 
-        return getLevel.getNearbyEntities(
-            Player::class.java,
-            TargetingConditions.DEFAULT,
-            null,
-            getInflate()
-        ).toList()
+        return getLevel.getEntities(null, getInflate()).filter { clazz.isInstance(it) }
     }
 
     fun adjustDirection(direction: Direction){
@@ -96,16 +117,17 @@ class EntityModuleBlockEntity(
             .south(south)
             .east(east)
             .west(west)
-        val aabb = AABB(pos1)
 
-        return aabb
-            .setMinX(aabb.minX + this.xSize)
-            .setMaxX(aabb.maxX - this.xSize)
-            .setMinY(aabb.minY + this.ySize)
-            .setMaxY(aabb.maxY - this.ySize)
-            .setMinZ(aabb.minZ + this.zSize)
-            .setMaxZ(aabb.maxZ - this.zSize)
+        return Helpers.getInflate(pos1, xSize, ySize, zSize)
     }
+
+    override fun setInputSlots(): Int = 10
+
+    override fun setOutputSlots(): Int = 0
+
+    override fun getMaxSlotSizeInput(): Int = 1
+
+    override fun getMaxSlotSizeOutput(): Int = 1
 
     override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
         super.saveAdditional(tag, registries)

@@ -9,18 +9,21 @@ import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Mth
 import net.minecraft.world.phys.AABB
+import net.minecraft.world.phys.Vec3
+import org.joml.Matrix3f
+import org.joml.Matrix4f
 import java.awt.Color
 
 object RenderBounding {
 
-    fun renderLines(matrix: PoseStack, aabb: AABB, color: Color, buffer: MultiBufferSource) {
+    fun renderLines(matrix: PoseStack, aabb: AABB, color: Color, buffer: MultiBufferSource, type: RenderType = RenderType.lines()) {
         val x = aabb.minX.toFloat()
         val y = aabb.minY.toFloat()
         val z = aabb.minZ.toFloat()
         val dx = aabb.maxX.toFloat()
         val dy = aabb.maxY.toFloat()
         val dz = aabb.maxZ.toFloat()
-        val builder = buffer.getBuffer(RenderType.lines())
+        val builder = buffer.getBuffer(type)
 
         matrix.pushPose()
         val matrix4f = matrix.last().pose()
@@ -34,35 +37,37 @@ object RenderBounding {
                 .setNormal(matrix3f, nX, nY, nZ)
         }
 
-        addVertexes(x,  y,  z,  1.0f,  0.0f,  0.0f)
-        addVertexes(dx, y,  z,  1.0f,  0.0f,  0.0f)
-        addVertexes(x,  y,  z,  0.0f,  1.0f,  0.0f)
-        addVertexes(x,  dy, z,  0.0f,  1.0f,  0.0f)
+        val nX = 1.0f
+        val nY = 0.0f
+        addVertexes(x,  y,  z, nX, nY, nY)
+        addVertexes(dx, y,  z, nX, nY, nY)
+        addVertexes(x,  y,  z, nY, nX, nY)
+        addVertexes(x,  dy, z, nY, nX, nY)
 
-        addVertexes(x,  y,  z,  0.0f,  0.0f,  1.0f)
-        addVertexes(x,  y,  dz, 0.0f,  0.0f,  1.0f)
-        addVertexes(dx, y,  z,  0.0f,  1.0f,  0.0f)
-        addVertexes(dx, dy, z,  0.0f,  1.0f,  0.0f)
+        addVertexes(x,  y,  z, nY, nY, nX)
+        addVertexes(x,  y,  dz, nY, nY, nX)
+        addVertexes(dx, y,  z, nY, nX, nY)
+        addVertexes(dx, dy, z, nY, nX, nY)
 
-        addVertexes(dx, dy, z, -1.0f,  0.0f,  0.0f)
-        addVertexes(x,  dy, z, -1.0f,  0.0f,  0.0f)
-        addVertexes(x,  dy, z,  0.0f,  0.0f,  1.0f)
-        addVertexes(x,  dy, dz, 0.0f,  0.0f,  1.0f)
+        addVertexes(dx, dy, z, -nX, nY, nY)
+        addVertexes(x,  dy, z, -nX, nY, nY)
+        addVertexes(x,  dy, z, nY, nY, nX)
+        addVertexes(x,  dy, dz, nY, nY, nX)
 
-        addVertexes(x,  dy, dz, 0.0f, -1.0f,  0.0f)
-        addVertexes(x,  y,  dz, 0.0f, -1.0f,  0.0f)
-        addVertexes(x,  y,  dz, 1.0f,  0.0f,  0.0f)
-        addVertexes(dx, y,  dz, 1.0f,  0.0f,  0.0f)
+        addVertexes(x,  dy, dz, nY, -nX, nY)
+        addVertexes(x,  y,  dz, nY, -nX, nY)
+        addVertexes(x,  y,  dz, nX, nY, nY)
+        addVertexes(dx, y,  dz, nX, nY, nY)
 
-        addVertexes(dx, y,  dz, 0.0f,  0.0f, -1.0f)
-        addVertexes(dx, y,  z,  0.0f,  0.0f, -1.0f)
-        addVertexes(x,  dy, dz, 1.0f,  0.0f,  0.0f)
-        addVertexes(dx, dy, dz, 1.0f,  0.0f,  0.0f)
+        addVertexes(dx, y,  dz, nY, nY, -nX)
+        addVertexes(dx, y,  z, nY, nY, -nX)
+        addVertexes(x,  dy, dz, nX, nY, nY)
+        addVertexes(dx, dy, dz, nX, nY, nY)
 
-        addVertexes(dx, y,  dz, 0.0f,  1.0f,  0.0f)
-        addVertexes(dx, dy, dz, 0.0f,  1.0f,  0.0f)
-        addVertexes(dx, dy, z,  0.0f,  0.0f,  1.0f)
-        addVertexes(dx, dy, dz, 0.0f,  0.0f,  1.0f)
+        addVertexes(dx, y,  dz, nY, nX, nY)
+        addVertexes(dx, dy, dz, nY, nX, nY)
+        addVertexes(dx, dy, z, nY, nY, nX)
+        addVertexes(dx, dy, dz, nY, nY, nX)
 
         matrix.popPose()
     }

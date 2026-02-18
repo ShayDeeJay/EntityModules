@@ -7,15 +7,15 @@ import net.minecraft.world.item.Item
 import net.neoforged.neoforge.client.model.generators.ItemModelBuilder
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider
 import net.neoforged.neoforge.common.data.ExistingFileHelper
-import net.neoforged.neoforge.registries.DeferredHolder
-import net.neoforged.neoforge.registries.DeferredItem
 import org.shaydee.entitymodules.EntityModules
-import org.shaydee.entitymodules.helpers.Helpers
+import org.shaydee.entitymodules.helpers.EMHelpers
 import org.shaydee.entitymodules.registry.EMRegistries
 import java.util.function.Consumer
 
-class ModItemModelProvider(output: PackOutput, existingFileHelper: ExistingFileHelper) :
-    ItemModelProvider(output, EntityModules.ID, existingFileHelper) {
+class ModItemModelProvider(
+    output: PackOutput,
+    existingFileHelper: ExistingFileHelper
+) : ItemModelProvider(output, EntityModules.ID, existingFileHelper) {
     override fun registerModels() {
         registerSimpleItems()
     }
@@ -27,7 +27,7 @@ class ModItemModelProvider(output: PackOutput, existingFileHelper: ExistingFileH
 
     private fun getWithParent(item: Item, path: String): ItemModelBuilder {
         return withExistingParent(path, ResourceLocation.withDefaultNamespace("item/generated"))
-            .texture("layer0", Helpers.res("item/$path"))
+            .texture("layer0", EMHelpers.res("item/$path"))
     }
 
     private fun registerSimpleItems() {
