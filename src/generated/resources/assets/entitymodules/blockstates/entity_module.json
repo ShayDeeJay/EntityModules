@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "entitymodules:block/entity_module"
+    }
+  }
+}

@@ -1,0 +1,5 @@
+// 1.21.1	2026-01-20T01:36:13.9043029	Recipes
+221067df6084f230e4dbc3106016866a61d181f9 data/entitymodules/advancement/recipes/misc/entity_module.json
+4202e5b9701b2ff00f85d3d03d9dc0faf8e9a4f9 data/entitymodules/advancement/recipes/misc/entity_module_controller.json
+82a260ece523315d2a5f3526edd6a07f4ca7cabb data/entitymodules/recipe/entity_module.json
+af8eb79e852fc4b80299ec26b5ec60d5e8213da4 data/entitymodules/recipe/entity_module_controller.json

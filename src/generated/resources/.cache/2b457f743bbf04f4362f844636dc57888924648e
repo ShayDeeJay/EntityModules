@@ -1,0 +1,11 @@
+// 1.21.1	2026-04-11T17:55:12.473432	Item Models: entitymodules
+b3af74ae57f3e810d1bd2db14e703cd7b06d717a assets/entitymodules/models/item/entity_module_controller.json
+f43dd55643e5e08e59f0908bf8656c71113be154 assets/entitymodules/models/item/experience_module.json
+bf416ef2b9c77e650d6ef7e19a65ba1d9ddb7b10 assets/entitymodules/models/item/hostile_mob_module.json
+f31f2f7613010968b0d6007afda0706b09f11ff2 assets/entitymodules/models/item/inventory_function.json
+f9411c565de2f7df52087a120f92fdd09e5fa09d assets/entitymodules/models/item/item_module.json
+92568e5c7d2c73a37934952c3b587c01f1fe4c28 assets/entitymodules/models/item/linking_tool.json
+26f222575e8ea88c4db0b52a4852a0db930c26eb assets/entitymodules/models/item/neutral_mob_module.json
+38fb4f7870b8811456c1463b3af39b7bc10df512 assets/entitymodules/models/item/passive_mob_module.json
+1750f635b33de0141e42c028b6515ea8de106d07 assets/entitymodules/models/item/player_module.json
+1d221aab11e44cefab678057422c4b95106b5fc7 assets/entitymodules/models/item/teleport_function.json
