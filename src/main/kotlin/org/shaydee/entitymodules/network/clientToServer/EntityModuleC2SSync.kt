@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerLevel
 import net.neoforged.neoforge.network.handling.IPayloadContext
 import org.shaydee.entitymodules.EntityModules
 import org.shaydee.entitymodules.block.entity_module.EntityModuleBlockEntity
-import org.shaydee.entitymodules.item.EntityModuleController
+import org.shaydee.entitymodules.item.controller.EntityModuleController
 import org.shaydee.entitymodules.registry.EMRegistries
 import org.shaydee.shaydeeapi.Helpers
 

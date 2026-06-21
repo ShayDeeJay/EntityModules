@@ -6,75 +6,89 @@ import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.Entity
-import net.minecraft.world.entity.animal.Animal
-import net.minecraft.world.entity.monster.Enemy
-import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.DispenserBlock.TRIGGERED
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.AABB
-import net.neoforged.neoforge.capabilities.Capabilities
-import net.neoforged.neoforge.common.NeoForge
-import net.neoforged.neoforge.energy.ComponentEnergyStorage
+import org.shaydee.entitymodules.data.EMType
+import org.shaydee.entitymodules.data.FunctionType
+import org.shaydee.entitymodules.item.Function
+import org.shaydee.entitymodules.item.Module
 import org.shaydee.entitymodules.registry.EMRegistries
 import org.shaydee.shaydeeapi.Helpers
+import org.shaydee.shaydeeapi.Helpers.sLevel
 import org.shaydee.shaydeeapi.block.AbstractBEInventory
+import org.shaydee.shaydeeapi.helpers.BlockHelpers
 
 class EntityModuleBlockEntity(
     pos: BlockPos,
     blockState: BlockState,
+    var tempExpStore: Int = 0,
+    var externalBoundingPos: BlockPos = FAKE_POS,
+    private var north: Int = 0,
+    private var south: Int = 0,
+    private var east: Int = 0,
+    private var west: Int = 0,
+    private var up: Int = 0,
+    private var down: Int = 0,
+    private var xSize: Int = 1,
+    private var ySize: Int = 1,
+    private var zSize: Int = 1,
 ) : AbstractBEInventory(EMRegistries.ENTITY_MODULE_BE, pos, blockState, 1) {
 
-    var north = 0
-    var south = 0
-    var east = 0
-    var west = 0
-    var up = 0
-    var down = 0
-    var xSize = 1
-    var ySize = 1
-    var zSize = 1
+    override fun setInputSlots(): Int = 10
 
-    enum class EMType(val clazz: Class<*>){
-        MONSTER(Enemy::class.java),
-        PASSIVE(Animal::class.java),
-        PLAYER(Player::class.java)
+    override fun setOutputSlots(): Int = 0
+
+    override fun getMaxSlotSizeInput(): Int = 1
+
+    override fun getMaxSlotSizeOutput(): Int = 1
+
+    fun getModule(): ItemStack = inputItemHandler.getStackInSlot(0)
+
+    fun getFunction(): ItemStack = inputItemHandler.getStackInSlot(1)
+
+    fun getExternalBounding() = getLevel()?.getBlockEntity(externalBoundingPos) as? EntityModuleBlockEntity
+
+    private fun detectRedstone(level: ServerLevel, pos: BlockPos, inflate: AABB, eMType: EMType, ) {
+        val blockState = level.getBlockState(pos)
+        level.setBlockAndUpdate(pos, blockState.setValue(TRIGGERED, !getEntities(level, inflate, eMType.clazz).isEmpty()))
     }
-
-    fun tick(level: Level, pos: BlockPos, state: BlockState) {
-        if(level is ServerLevel){
-            teleportEntity(level, EMType.MONSTER.clazz)
-//            outputEntityDetect(level, state, clazz)
-        }
-    }
-
-    private fun teleportEntity(level: ServerLevel, clazz: Class<*>){
-        val center = this.blockPos.center
-        getEntities(clazz).forEach {
-            it?.teleportTo(
-                level,
-                center.x,
-                center.y - it.bbHeight - 0.5,
-                center.z,
-                mutableSetOf(),
-                it.yRot,
-                it.xRot
-            )
-        }
-    }
-
-    private fun outputEntityDetect(level: Level, state: BlockState, clazz: Class<out Entity>) =
-        level.setBlockAndUpdate(blockPos, state.setValue(TRIGGERED, !getEntities(clazz).isEmpty()))
 
     fun resetBounding(){
         resetSize()
         resetOffset()
     }
 
+    fun getEMType(): EMType? {
+        val item = getModule().item as? Module
+        return item?.getType
+    }
+
+    fun getFunctionType(): FunctionType? {
+        val item = getFunction().item as? Function
+        return item?.getType
+    }
+
+    fun tick(level: Level, pos: BlockPos, state: BlockState) {
+        val getLevel = level.sLevel() ?: return
+        getEMType()?.let { eMType ->
+            detectRedstone(getLevel, pos, getInflate(), eMType)
+            getFunctionType()?.execute(this, getLevel, eMType)
+        }
+    }
+
     fun resetSize(){
         xSize = 1
         ySize = 1
         zSize = 1
+    }
+
+    fun adjustSize(x: Int, y: Int, z: Int){
+        xSize += x
+        ySize += y
+        zSize += z
     }
 
     fun resetOffset(){
@@ -84,12 +98,6 @@ class EntityModuleBlockEntity(
         west = 0
         up = 0
         down = 0
-    }
-
-    fun getEntities(clazz: Class<*>): List<Entity?> {
-        val getLevel = this.level ?: return listOf()
-
-        return getLevel.getEntities(null, getInflate()).filter { clazz.isInstance(it) }
     }
 
     fun adjustDirection(direction: Direction){
@@ -103,14 +111,12 @@ class EntityModuleBlockEntity(
         }
     }
 
-    fun adjustSize(x: Int, y: Int, z: Int){
-        xSize += x
-        ySize += y
-        zSize += z
-    }
-
     fun getInflate(): AABB {
-        val pos1 = this.worldPosition
+        getExternalBounding()?.let {
+            return it.getInflate()
+        }
+
+        val pos1 = worldPosition
             .above(up)
             .below(down)
             .north(north)
@@ -120,14 +126,6 @@ class EntityModuleBlockEntity(
 
         return Helpers.getInflate(pos1, xSize, ySize, zSize)
     }
-
-    override fun setInputSlots(): Int = 10
-
-    override fun setOutputSlots(): Int = 0
-
-    override fun getMaxSlotSizeInput(): Int = 1
-
-    override fun getMaxSlotSizeOutput(): Int = 1
 
     override fun saveAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
         super.saveAdditional(tag, registries)
@@ -141,7 +139,11 @@ class EntityModuleBlockEntity(
         tag.putInt("xSize", xSize)
         tag.putInt("ySize", ySize)
         tag.putInt("zSize", zSize)
+
+        tag.putInt("tempExpStore", tempExpStore)
+        externalBoundingPos?.let { BlockHelpers.saveBlockPosNBT(tag, it) }
     }
+
 
     override fun loadAdditional(tag: CompoundTag, registries: HolderLookup.Provider) {
         super.loadAdditional(tag, registries)
@@ -155,6 +157,17 @@ class EntityModuleBlockEntity(
         xSize = tag.getInt("xSize")
         ySize = tag.getInt("ySize")
         zSize = tag.getInt("zSize")
+
+        tempExpStore = tag.getInt("tempExpStore")
+        externalBoundingPos = BlockHelpers.loadBlockPosNBT(tag)
+    }
+
+    companion object {
+        val FAKE_POS = BlockPos(0, -100, 0)
+
+        fun getEntities(level: Level, inflate: AABB, clazz: Class<*>): List<Entity?> {
+            return level.getEntities(null, inflate).filter { clazz.isInstance(it) }
+        }
     }
 
 }

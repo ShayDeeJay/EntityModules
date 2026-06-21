@@ -1,13 +1,29 @@
 {
   "block.entitymodules.entity_module": "Entity Module",
   "creative_tab.entity_module_tab": "Entity Modules",
+
   "item.entitymodules.entity_module_controller": "Module Controller",
+  "item.entitymodules.item_module": "Item Module",
+  "item.entitymodules.passive_mob_module": "Passive Mob Module",
+  "item.entitymodules.hostile_mob_module": "Hostile Mob Module",
+  "item.entitymodules.neutral_mob_module": "Player Module",
+  "item.entitymodules.player_module": "Player Module",
+  "item.entitymodules.experience_module": "Experience Module",
+  "item.entitymodules.redstone_function": "Redstone Output",
+  "item.entitymodules.teleport_function": "Teleport Entity",
+  "item.entitymodules.inventory_function": "Insert Inventory",
+  "item.entitymodules.linking_tool": "Linking Tool",
 
   "entitymodules.modes.position": "Position",
   "entitymodules.modes.size": "Size",
   "entitymodules.modes.reset": "Reset",
 
+  "entitymodules.linking.link_copied": "Position Copied",
+  "entitymodules.linking.link_set": "Position Set",
+  "entitymodules.linking.reset": "Position Reset",
+  "entitymodules.linking.removed": "Position Removed",
+
+
   "entitymodules.info.pos": "Pos",
   "entitymodules.info.mode": "Mode: "
-
 }

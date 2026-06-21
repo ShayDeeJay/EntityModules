@@ -12,6 +12,9 @@ import org.shaydee.entitymodules.registry.EMRegistries
 import org.shaydee.entitymodules.registry.EMRegistries.CREATIVE_MODE_TAB
 import org.shaydee.entitymodules.registry.EMRegistries.ENTITY_MODULE_BLOCK
 import org.shaydee.entitymodules.registry.EMRegistries.ENTITY_MODULE_CONTROLLER
+import org.shaydee.entitymodules.registry.EMRegistries.LINKING_TOOL
+import org.shaydee.entitymodules.registry.EMRegistries.regFunctions
+import org.shaydee.entitymodules.registry.EMRegistries.regModules
 import thedarkcolour.kotlinforforge.neoforge.forge.MOD_BUS
 
 @Mod(EntityModules.ID)
@@ -40,6 +43,14 @@ class EntityModules {
                 .displayItems { parameters, outPut ->
                     outPut.accept{ ENTITY_MODULE_BLOCK.asItem() }
                     outPut.accept { ENTITY_MODULE_CONTROLLER }
+                    outPut.accept { LINKING_TOOL }
+                    regModules.forEach {
+                        outPut.accept { it.get() }
+                    }
+
+                    regFunctions.forEach {
+                        outPut.accept { it.get() }
+                    }
                 }
                 .withTabsBefore(CreativeModeTabs.SPAWN_EGGS)
                 .build()

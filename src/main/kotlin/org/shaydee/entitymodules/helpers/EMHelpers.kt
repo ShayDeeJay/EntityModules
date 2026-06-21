@@ -6,13 +6,16 @@ import net.minecraft.world.level.Level
 import org.shaydee.entitymodules.EntityModules
 import org.shaydee.entitymodules.block.entity_module.EntityModuleBlockEntity
 import org.shaydee.shaydeeapi.Helpers
+import org.shaydee.shaydeeapi.helpers.TextHelpers.withStyle
 
 
 object EMHelpers{
 
-    fun getEntityModule(level: Level, pos: BlockPos): EntityModuleBlockEntity? =
-        level.getBlockEntity(pos) as? EntityModuleBlockEntity
+    fun Level.getEntityModule(pos: BlockPos): EntityModuleBlockEntity? =
+        this.getBlockEntity(pos) as? EntityModuleBlockEntity
 
-    fun res(location: String?): ResourceLocation = Helpers.res(location ?: "", EntityModules.ID)
+    fun String.res(): ResourceLocation = Helpers.res(this, EntityModules.ID)
+
+    fun String.withContext(colour: Int = -1) = "entitymodules.${this}".withStyle(colour)
 
 }

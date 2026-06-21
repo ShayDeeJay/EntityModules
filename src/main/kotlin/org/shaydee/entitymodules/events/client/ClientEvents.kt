@@ -11,7 +11,7 @@ import net.neoforged.neoforge.client.event.InputEvent
 import net.neoforged.neoforge.network.PacketDistributor
 import org.shaydee.entitymodules.EntityModules
 import org.shaydee.entitymodules.block.entity_module.EntityModuleBlockEntity
-import org.shaydee.entitymodules.item.EntityModuleController
+import org.shaydee.entitymodules.item.controller.EntityModuleController
 import org.shaydee.entitymodules.registry.EMRegistries
 
 @EventBusSubscriber(modid = EntityModules.ID, value = [Dist.CLIENT])

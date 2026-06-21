@@ -8,9 +8,10 @@ import net.neoforged.neoforge.client.model.generators.ItemModelBuilder
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider
 import net.neoforged.neoforge.common.data.ExistingFileHelper
 import org.shaydee.entitymodules.EntityModules
-import org.shaydee.entitymodules.helpers.EMHelpers
+import org.shaydee.entitymodules.helpers.EMHelpers.res
 import org.shaydee.entitymodules.registry.EMRegistries
-import java.util.function.Consumer
+import org.shaydee.entitymodules.registry.EMRegistries.regFunctions
+import org.shaydee.entitymodules.registry.EMRegistries.regModules
 
 class ModItemModelProvider(
     output: PackOutput,
@@ -27,15 +28,22 @@ class ModItemModelProvider(
 
     private fun getWithParent(item: Item, path: String): ItemModelBuilder {
         return withExistingParent(path, ResourceLocation.withDefaultNamespace("item/generated"))
-            .texture("layer0", EMHelpers.res("item/$path"))
+            .texture("layer0", "item/$path".res())
     }
 
     private fun registerSimpleItems() {
-        val simpleItems = listOf(
-            EMRegistries.ENTITY_MODULE_CONTROLLER
-        )
+        regModules.forEach {
+            this.createSimpleItemModel(it.get())
+        }
 
-        simpleItems.forEach(Consumer { item -> this.createSimpleItemModel(item) })
+        regFunctions.forEach {
+            this.createSimpleItemModel(it.get())
+        }
+
+        listOf(
+            EMRegistries.ENTITY_MODULE_CONTROLLER,
+            EMRegistries.LINKING_TOOL
+        ).forEach { this.createSimpleItemModel(it)  }
     }
 
     companion object {
